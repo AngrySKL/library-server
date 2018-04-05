@@ -9,7 +9,9 @@ var urlParser = bodyParser.json();
 loginRouter.post('/', urlParser, function (req, res) {
     var username = req.body.username;
     var password = req.body.password;
-    if (username == 'Veal' && password == "Elekta") {
+    console.log("username = " + username);
+    console.log("password = " + password);
+    if (username === 'Veal' && password === "Elekta") {
         res.json(new response_1.LoginSuccess({ nickname: 'Veal', id: 32 }));
     }
     else {

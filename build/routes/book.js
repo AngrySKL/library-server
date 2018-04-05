@@ -23,6 +23,8 @@ var books = [
 bookRouter.get('/', function (req, res) {
     res.json(books);
 });
-bookRouter.get('/book/:id', function (req, res) {
-    res.json(books.find(function (book) { return book.id == req.params.id; }));
+bookRouter.get('/:id', function (req, res) {
+    var book = books.find(function (book) { return book.id == req.params.id; });
+    var bookDetail = new book_1.BookDetail(book.id, book.title, 'Veal', "<p>\n      Lorem ipsum dolor sit amet consectetur adipisicing elit. Ducimus modi commodi nobis nisi quas doloribus numquam error dolorum at a.\n    </p>\n    <p>\n      Lorem ipsum dolor sit amet consectetur adipisicing elit. Molestias laboriosam magnam quos aut similique, qui quidem excepturi, eligendi voluptatem eveniet commodi porro? Cum pariatur et inventore temporibus cupiditate voluptatibus error, quisquam, corporis mollitia perferendis modi molestias animi necessitatibus! Corrupti, ea animi. Culpa magnam dolorem placeat fugit unde laudantium delectus reprehenderit!\n      </p>\n    <p>\n      Lorem ipsum, dolor sit amet consectetur adipisicing elit. Quo vitae harum deserunt aut. Eaque aspernatur maiores fugiat deleniti vero repudiandae neque, ratione, laborum sint dolorum, aut unde quia perferendis molestiae.\n      </p>\n    <p>\n      Lorem ipsum dolor sit amet consectetur adipisicing elit. A laudantium, quasi, laboriosam, ipsum expedita id rerum quidem saepe nobis architecto obcaecati tenetur nostrum.\n      </p>", book.borrower);
+    res.json(bookDetail);
 });

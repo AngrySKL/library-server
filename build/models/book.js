@@ -10,3 +10,14 @@ var Book = /** @class */ (function () {
     return Book;
 }());
 exports.Book = Book;
+var BookDetail = /** @class */ (function () {
+    function BookDetail(id, title, author, description, borrower) {
+        this.id = id;
+        this.title = title;
+        this.author = author;
+        this.description = description;
+        this.borrower = borrower;
+    }
+    return BookDetail;
+}());
+exports.BookDetail = BookDetail;
