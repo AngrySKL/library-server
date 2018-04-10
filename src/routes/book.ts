@@ -1,6 +1,8 @@
 import { Book, BookDetail } from "../models/book";
 import { Router } from "express";
 
+import * as _ from "lodash";
+
 const bookRouter: Router = Router();
 
 const books = [
@@ -21,10 +23,20 @@ const books = [
 ];
 
 bookRouter.get('/', (req, res) => {
-  res.json(books);
-});
+  var term = req.query.searchTerm;
+  var currentPage = parseInt(req.query.currentPage);
+  var pageSize = parseInt(req.query.pageSize);
 
-bookRouter.get('/:id', (req, res) => {
+  const searchResult = term ? books.filter( (book) => book.title.indexOf(term) >= 0) : books;
+  const totalCount = searchResult.length;
+  const start = (currentPage - 1) * pageSize;
+  const end = start + pageSize;
+  const finalResult = searchResult.slice(start, end);
+  
+  res.json({ books: finalResult, totalCount: totalCount });
+})
+
+bookRouter.get('/detail/:id', (req, res) => {
   const book = books.find((book) => book.id == req.params.id);
   const bookDetail = new BookDetail(
     book.id,
