@@ -1,5 +1,6 @@
 import { BorrowFail, BorrowSuccess } from './../models/response';
 import { Router } from "express";
+import { books } from "./mock";
 
 import * as bodyParser from 'body-parser';
 
@@ -17,6 +18,10 @@ borrowRouter.put('/', urlParser,  (req, res) => {
       borrower: 'Askey'
     }));
   } else {
+    const index = books.findIndex((book) => book.id === bookId);
+    books[index].borrower = 'Veal';
+    books[index].status = 1;
+    
     res.json(new BorrowSuccess({
       borrower: 'Veal'
     }));

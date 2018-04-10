@@ -2,6 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 var response_1 = require("./../models/response");
 var express_1 = require("express");
+var mock_1 = require("./mock");
 var bodyParser = require("body-parser");
 var borrowRouter = express_1.Router();
 exports.borrowRouter = borrowRouter;
@@ -17,6 +18,9 @@ borrowRouter.put('/', urlParser, function (req, res) {
         }));
     }
     else {
+        var index = mock_1.books.findIndex(function (book) { return book.id === bookId; });
+        mock_1.books[index].borrower = 'Veal';
+        mock_1.books[index].status = 1;
         res.json(new response_1.BorrowSuccess({
             borrower: 'Veal'
         }));
