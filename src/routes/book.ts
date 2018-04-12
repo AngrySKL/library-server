@@ -2,8 +2,6 @@ import { Book, BookDetail } from "../models/book";
 import { Router } from "express";
 import { books } from "./mock";
 
-import * as _ from "lodash";
-
 const bookRouter: Router = Router();
 
 bookRouter.get('/', (req, res) => {
