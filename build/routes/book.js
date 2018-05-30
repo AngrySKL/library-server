@@ -2,22 +2,72 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 var book_1 = require("../models/book");
 var express_1 = require("express");
-var mock_1 = require("./mock");
+var db_config_1 = require("../config/db.config");
+var mysql_1 = require("mysql");
+var bodyParser = require("body-parser");
 var bookRouter = express_1.Router();
 exports.bookRouter = bookRouter;
+var urlParser = bodyParser.json();
 bookRouter.get('/', function (req, res) {
     var term = req.query.searchTerm;
     var currentPage = parseInt(req.query.currentPage);
     var pageSize = parseInt(req.query.pageSize);
-    var searchResult = term ? mock_1.books.filter(function (book) { return book.title.indexOf(term) >= 0; }) : mock_1.books;
-    var totalCount = searchResult.length;
-    var start = (currentPage - 1) * pageSize;
-    var end = start + pageSize;
-    var finalResult = searchResult.slice(start, end);
-    res.json({ books: finalResult, totalCount: totalCount });
+    var sql = 'select * from book';
+    mysql_1.createConnection(db_config_1.dbConfig).query(sql, function (err, books) {
+        if (err)
+            return res.json({ code: 401, message: 'Get books failed!' });
+        var searchResult = term ? books.filter(function (book) { return book.title.indexOf(term) >= 0; }) : books;
+        var totalCount = searchResult.length;
+        if (!currentPage && !pageSize)
+            return res.json({ books: searchResult, totalCount: totalCount });
+        var start = (currentPage - 1) * pageSize;
+        var end = start + pageSize;
+        var finalResult = searchResult.slice(start, end);
+        return res.json({ books: finalResult, totalCount: totalCount });
+    });
 });
 bookRouter.get('/detail/:id', function (req, res) {
-    var book = mock_1.books.find(function (book) { return book.id == req.params.id; });
-    var bookDetail = new book_1.BookDetail(book.id, book.title, 'Veal', "<p>\n      Lorem ipsum dolor sit amet consectetur adipisicing elit. Ducimus modi commodi nobis nisi quas doloribus numquam error dolorum at a.\n    </p>\n    <p>\n      Lorem ipsum dolor sit amet consectetur adipisicing elit. Molestias laboriosam magnam quos aut similique, qui quidem excepturi, eligendi voluptatem eveniet commodi porro? Cum pariatur et inventore temporibus cupiditate voluptatibus error, quisquam, corporis mollitia perferendis modi molestias animi necessitatibus! Corrupti, ea animi. Culpa magnam dolorem placeat fugit unde laudantium delectus reprehenderit!\n      </p>\n    <p>\n      Lorem ipsum, dolor sit amet consectetur adipisicing elit. Quo vitae harum deserunt aut. Eaque aspernatur maiores fugiat deleniti vero repudiandae neque, ratione, laborum sint dolorum, aut unde quia perferendis molestiae.\n      </p>\n    <p>\n      Lorem ipsum dolor sit amet consectetur adipisicing elit. A laudantium, quasi, laboriosam, ipsum expedita id rerum quidem saepe nobis architecto obcaecati tenetur nostrum.\n      </p>", book.borrower);
-    res.json(bookDetail);
+    var sql = "select * from book where id=" + req.params.id;
+    mysql_1.createConnection(db_config_1.dbConfig).query(sql, function (err, books) {
+        if (err)
+            return res.json({ code: 401, message: 'Get book detail failed!' });
+        var book = books[0];
+        return res.json(new book_1.BookDetail(book.id, book.title, book.author, book.publisher, book.ISBN, book.borrowerId));
+    });
+});
+bookRouter.post('/add', urlParser, function (req, res) {
+    var title = req.body.title;
+    var author = req.body.author;
+    var publisher = req.body.publisher;
+    var ISBN = req.body.ISBN;
+    var sql = "insert into book (title, author, publisher, ISBN) values ('" + title + "', '" + publisher + "', '" + publisher + "', '" + ISBN + "')";
+    mysql_1.createConnection(db_config_1.dbConfig).query(sql, function (err) {
+        if (err) {
+            return res.json({ code: 401, message: 'Add book failed!' });
+        }
+        return res.json({ code: 200, message: 'Add book success!' });
+    });
+});
+bookRouter.post('/save', urlParser, function (req, res) {
+    var id = req.body.id;
+    var title = req.body.title;
+    var author = req.body.author;
+    var publisher = req.body.publisher;
+    var ISBN = req.body.ISBN;
+    var sql = "update book set title='" + title + "', author='" + author + "', publisher='" + publisher + "', ISBN='" + ISBN + "' where id=" + id;
+    mysql_1.createConnection(db_config_1.dbConfig).query(sql, function (err) {
+        if (err) {
+            return res.json({ code: 401, message: 'Save book failed!' });
+        }
+        return res.json({ code: 200, message: 'Save book success!' });
+    });
+});
+bookRouter.post('/delete', urlParser, function (req, res) {
+    var id = req.body.id;
+    var sql = "delete from book where id=" + id;
+    mysql_1.createConnection(db_config_1.dbConfig).query(sql, function (err) {
+        if (err)
+            return res.json({ code: 401, message: 'Delete book failed!' });
+        return res.json({ code: 200, message: 'Delete book success!' });
+    });
 });

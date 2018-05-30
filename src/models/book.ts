@@ -9,6 +9,7 @@ export class BookDetail {
   constructor(public id: number,
               public title: string,
               public author: string,
-              public description: string,
+              public publisher: string,
+              public ISBN: string,
               public borrower: string) {}
 }

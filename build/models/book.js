@@ -11,11 +11,12 @@ var Book = /** @class */ (function () {
 }());
 exports.Book = Book;
 var BookDetail = /** @class */ (function () {
-    function BookDetail(id, title, author, description, borrower) {
+    function BookDetail(id, title, author, publisher, ISBN, borrower) {
         this.id = id;
         this.title = title;
         this.author = author;
-        this.description = description;
+        this.publisher = publisher;
+        this.ISBN = ISBN;
         this.borrower = borrower;
     }
     return BookDetail;
