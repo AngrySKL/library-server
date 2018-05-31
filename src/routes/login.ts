@@ -10,11 +10,8 @@ loginRouter.post('/', urlParser, (req, res) => {
   const username = req.body.username;
   const password = req.body.password;
 
-  console.log(`username = ${username}`);
-  console.log(`password = ${password}`);
-
   if (username === 'Veal' && password === "Elekta") {
-    res.json(new LoginSuccess({ nickname: 'Veal', id: 32}));
+    res.json(new LoginSuccess({ nickname: 'Veal', id: 6}));
   } else {
     res.json(new LoginFail());
   }

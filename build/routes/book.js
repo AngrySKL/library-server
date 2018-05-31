@@ -71,3 +71,12 @@ bookRouter.post('/delete', urlParser, function (req, res) {
         return res.json({ code: 200, message: 'Delete book success!' });
     });
 });
+bookRouter.post('/return', urlParser, function (req, res) {
+    var id = req.body.id;
+    var sql = "update book set borrowerId=null where id=" + id;
+    mysql_1.createConnection(db_config_1.dbConfig).query(sql, function (err) {
+        if (err)
+            return res.json({ code: 401, message: 'Return book failed!' });
+        return res.json({ code: 200, message: 'Return book success!' });
+    });
+});

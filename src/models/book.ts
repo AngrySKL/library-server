@@ -11,5 +11,5 @@ export class BookDetail {
               public author: string,
               public publisher: string,
               public ISBN: string,
-              public borrower: string) {}
+              public borrowerId: string) {}
 }

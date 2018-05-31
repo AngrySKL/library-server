@@ -1,7 +1,7 @@
 import { Book, BookDetail } from "../models/book";
 import { Router } from "express";
 import { dbConfig } from "../config/db.config";
-import { createConnection, Connection } from "mysql";
+import { createConnection } from "mysql";
 
 import * as bodyParser from 'body-parser';
 
@@ -77,4 +77,14 @@ bookRouter.post('/delete', urlParser, (req, res) => {
     return res.json({ code: 200, message: 'Delete book success!' });  
   })
 })
+
+bookRouter.post('/return', urlParser, (req, res) => {
+  const id = req.body.id;
+  const sql = `update book set borrowerId=null where id=${id}`;
+  createConnection(dbConfig).query(sql, (err) => {
+    if (err) return res.json({ code: 401, message: 'Return book failed!' }); 
+    return res.json({ code: 200, message: 'Return book success!' });  
+  })
+})
+
 export { bookRouter };

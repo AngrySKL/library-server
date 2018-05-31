@@ -7,5 +7,3 @@ const dbConfig = {
 }
 
 export { dbConfig };
-
-
