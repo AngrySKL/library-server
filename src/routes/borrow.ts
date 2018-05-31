@@ -17,10 +17,10 @@ borrowRouter.post('/', urlParser,  (req, res) => {
   const sql = `update book set borrowerId=${tempBorrowerId} where id=${bookId}`;
   createConnection(dbConfig).query(sql, (err) => {
     if (err) {
-      return res.json(new BorrowFail());
+      return res.json({ code: 300, message: 'Borrow failed!' });
     }
 
-    return res.json(new BorrowSuccess());
+    return res.json({ code: 200, message: 'Borrow success!' });
   })
 });
 

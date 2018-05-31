@@ -1,6 +1,5 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var response_1 = require("./../models/response");
 var express_1 = require("express");
 var mysql_1 = require("mysql");
 var bodyParser = require("body-parser");
@@ -15,8 +14,8 @@ borrowRouter.post('/', urlParser, function (req, res) {
     var sql = "update book set borrowerId=" + tempBorrowerId + " where id=" + bookId;
     mysql_1.createConnection(db_config_1.dbConfig).query(sql, function (err) {
         if (err) {
-            return res.json(new response_1.BorrowFail());
+            return res.json({ code: 300, message: 'Borrow failed!' });
         }
-        return res.json(new response_1.BorrowSuccess());
+        return res.json({ code: 200, message: 'Borrow success!' });
     });
 });
