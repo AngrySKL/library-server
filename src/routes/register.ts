@@ -4,10 +4,10 @@ import { createConnection } from "mysql";
 
 import * as bodyParser from 'body-parser';
 
-const registeRouter: Router = Router();
+const registerRouter: Router = Router();
 const urlParser = bodyParser.json();
 
-registeRouter.post('/', urlParser, (req, res) => {
+registerRouter.post('/', urlParser, (req, res) => {
     const username = req.body.username;
     const password = req.body.password;
     const sql = `insert into user (name, password) values (${username}, ${password})`;
@@ -20,4 +20,4 @@ registeRouter.post('/', urlParser, (req, res) => {
     })
   });
   
-  export { registeRouter };
+  export { registerRouter };
