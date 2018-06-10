@@ -5,9 +5,23 @@ var express_1 = require("express");
 var db_config_1 = require("../config/db.config");
 var mysql_1 = require("mysql");
 var bodyParser = require("body-parser");
+var multer = require("multer");
 var bookRouter = express_1.Router();
 exports.bookRouter = bookRouter;
 var urlParser = bodyParser.json();
+var UPLOAD_PATH = 'uploads';
+var localStroage = multer.diskStorage({
+    destination: function (req, file, cb) {
+        cb(null, UPLOAD_PATH);
+    },
+    filename: function (req, file, cb) {
+        cb(null, file.fieldname + "-" + Date.now() + "." + getFileExtension(file.originalname));
+    }
+});
+var upload = multer({ storage: localStroage });
+function getFileExtension(originalName) {
+    return originalName.split('.').pop();
+}
 bookRouter.get('/', function (req, res) {
     var term = req.query.searchTerm;
     var currentPage = parseInt(req.query.currentPage);
@@ -79,4 +93,7 @@ bookRouter.post('/return', urlParser, function (req, res) {
             return res.json({ code: 401, message: 'Return book failed!' });
         return res.json({ code: 200, message: 'Return book success!' });
     });
+});
+bookRouter.post('/upload', upload.single('file'), function (req, res) {
+    var file = req.file;
 });

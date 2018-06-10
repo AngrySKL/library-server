@@ -4,9 +4,25 @@ import { dbConfig } from "../config/db.config";
 import { createConnection } from "mysql";
 
 import * as bodyParser from 'body-parser';
+import * as multer from 'multer';
 
 const bookRouter: Router = Router();
 const urlParser = bodyParser.json();
+
+const UPLOAD_PATH = 'uploads';
+const localStroage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, UPLOAD_PATH);
+  },
+  filename: (req, file, cb) => {
+    cb(null, `${file.fieldname}-${Date.now()}.${getFileExtension(file.originalname)}`);
+  }
+});
+const upload = multer({ storage: localStroage });
+
+function getFileExtension(originalName: string): string {
+  return originalName.split('.').pop();
+}
 
 bookRouter.get('/', (req, res) => {
   var term = req.query.searchTerm;
@@ -86,5 +102,9 @@ bookRouter.post('/return', urlParser, (req, res) => {
     return res.json({ code: 200, message: 'Return book success!' });  
   })
 })
+
+bookRouter.post('/upload', upload.single('file'), (req, res) => {
+  const file = req.file;
+});
 
 export { bookRouter };
