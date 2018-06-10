@@ -5,5 +5,8 @@
 /out-tsc
 /build
 
+# upload location
+/uploads
+
 # dependencies
 /node_modules
