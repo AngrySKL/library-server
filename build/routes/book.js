@@ -46,15 +46,16 @@ bookRouter.get('/detail/:id', function (req, res) {
         if (err)
             return res.json({ code: 401, message: 'Get book detail failed!' });
         var book = books[0];
-        return res.json(new book_1.BookDetail(book.id, book.title, book.author, book.publisher, book.ISBN, book.borrowerId));
+        return res.json(new book_1.BookDetail(book.id, book.title, book.author, book.publisher, book.ISBN, book.coverUrl, book.borrowerId));
     });
 });
-bookRouter.post('/add', urlParser, function (req, res) {
+bookRouter.post('/add', upload.single('cover'), function (req, res) {
     var title = req.body.title;
     var author = req.body.author;
     var publisher = req.body.publisher;
     var ISBN = req.body.ISBN;
-    var sql = "insert into book (title, author, publisher, ISBN) values ('" + title + "', '" + publisher + "', '" + publisher + "', '" + ISBN + "')";
+    var cover = req.file;
+    var sql = "insert into book (title, author, publisher, ISBN, coverUrl) values (\n    '" + title + "', '" + author + "', '" + publisher + "', '" + ISBN + "', " + (cover ? cover.path.replace('\\', '/') : 'null') + ")";
     mysql_1.createConnection(db_config_1.dbConfig).query(sql, function (err) {
         if (err) {
             return res.json({ code: 401, message: 'Add book failed!' });
@@ -62,13 +63,16 @@ bookRouter.post('/add', urlParser, function (req, res) {
         return res.json({ code: 200, message: 'Add book success!' });
     });
 });
-bookRouter.post('/save', urlParser, function (req, res) {
+bookRouter.post('/save', upload.single('cover'), function (req, res) {
     var id = req.body.id;
     var title = req.body.title;
     var author = req.body.author;
     var publisher = req.body.publisher;
     var ISBN = req.body.ISBN;
-    var sql = "update book set title='" + title + "', author='" + author + "', publisher='" + publisher + "', ISBN='" + ISBN + "' where id=" + id;
+    var cover = req.file;
+    // For simplication, we just replace the old cover with the new cover.
+    // We do not delete the old cover because there won't be so many files...
+    var sql = "update book set title='" + title + "', author='" + author + "', publisher='" + publisher + "', ISBN='" + ISBN + "', \n  coverUrl=" + (cover ? cover.path.replace('\\', '/') : 'null') + " where id=" + id;
     mysql_1.createConnection(db_config_1.dbConfig).query(sql, function (err) {
         if (err) {
             return res.json({ code: 401, message: 'Save book failed!' });
@@ -93,7 +97,4 @@ bookRouter.post('/return', urlParser, function (req, res) {
             return res.json({ code: 401, message: 'Return book failed!' });
         return res.json({ code: 200, message: 'Return book success!' });
     });
-});
-bookRouter.post('/upload', upload.single('file'), function (req, res) {
-    var file = req.file;
 });
