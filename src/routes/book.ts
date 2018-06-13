@@ -5,11 +5,12 @@ import { createConnection } from "mysql";
 
 import * as bodyParser from 'body-parser';
 import * as multer from 'multer';
+import * as path from 'path';
 
 const bookRouter: Router = Router();
 const urlParser = bodyParser.json();
 
-const UPLOAD_PATH = 'uploads';
+const UPLOAD_PATH = path.join(__dirname, '../uploads');
 const localStroage = multer.diskStorage({
   destination: (req, file, cb) => {
     cb(null, UPLOAD_PATH);
@@ -57,10 +58,10 @@ bookRouter.post('/add', upload.single('cover'), (req, res) => {
   const author = req.body.author;
   const publisher = req.body.publisher;
   const ISBN = req.body.ISBN;
-  const cover = req.file;
+  const coverUrl = req.file ? `'${req.file.path}'` : 'null';
 
   const sql = `insert into book (title, author, publisher, ISBN, coverUrl) values (
-    '${title}', '${author}', '${publisher}', '${ISBN}', ${cover ? cover.path.replace('\\', '/') : 'null'})`;
+    '${title}', '${author}', '${publisher}', '${ISBN}', ${coverUrl})`;
   createConnection(dbConfig).query(sql, (err) => { 
     if (err) {
       return res.json({ code: 401, message: 'Add book failed!' }); 
