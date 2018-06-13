@@ -9,6 +9,7 @@ import { registerRouter } from './routes/register';
 const app = express();
 
 app.use(cors());
+app.use('/uploads', express.static('./../uploads'));
 app.use('/api/books', bookRouter);
 app.use('/api/login', loginRouter);
 app.use('/api/borrow', borrowRouter);
