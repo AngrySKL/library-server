@@ -49,7 +49,7 @@ bookRouter.get('/detail/:id', (req, res) => {
   createConnection(dbConfig).query(sql, (err, books) => {
     if (err) return  res.json({ code: 401, message: 'Get book detail failed!' });
     const book = books[0];
-    return  res.json(new BookDetail(book.id, book.title, book.author,  book.publisher, book.ISBN, book.coverUrl, book.borrowerId));
+    return res.json(new BookDetail(book.id, book.title, book.author,  book.publisher, book.ISBN, book.coverName, book.coverSize, book.coverUrl, book.borrowerId));
   });
 });
 
@@ -58,10 +58,12 @@ bookRouter.post('/add', upload.single('cover'), (req, res) => {
   const author = req.body.author;
   const publisher = req.body.publisher;
   const ISBN = req.body.ISBN;
-  const coverUrl = req.file ? `'${req.file.path}'` : 'null';
+  const coverUrl = req.file ? `'http://localhost:8000/uploads/${req.file.filename}'` : 'null';
+  const coverName = req.file ? `'${req.file.filename}'` : 'null';
+  const coverSize = req.file ? req.file.size : 'null';
 
-  const sql = `insert into book (title, author, publisher, ISBN, coverUrl) values (
-    '${title}', '${author}', '${publisher}', '${ISBN}', ${coverUrl})`;
+  const sql = `insert into book (title, author, publisher, ISBN, coverName, coverSize, coverUrl) values (
+    '${title}', '${author}', '${publisher}', '${ISBN}', ${coverName}, ${coverSize}, ${coverUrl})`;
   createConnection(dbConfig).query(sql, (err) => { 
     if (err) {
       return res.json({ code: 401, message: 'Add book failed!' }); 
@@ -77,13 +79,12 @@ bookRouter.post('/save', upload.single('cover'), (req, res) => {
   const author = req.body.author;
   const publisher = req.body.publisher;
   const ISBN = req.body.ISBN;
-  const cover = req.file;
-
-  // For simplication, we just replace the old cover with the new cover.
-  // We do not delete the old cover because there won't be so many files...
+  const coverUrl = req.file ? `'http://localhost:8000/uploads/${req.file.filename}'` : 'null';
+  const coverName = req.file ? `'${req.file.filename}'` : 'null';
+  const coverSize = req.file ? req.file.size : 'null';
 
   const sql = `update book set title='${title}', author='${author}', publisher='${publisher}', ISBN='${ISBN}', 
-  coverUrl=${cover ? cover.path.replace('\\', '/') : 'null'} where id=${id}`;
+  coverUrl=${coverUrl}, coverName=${coverName}, coverSize=${coverSize} where id=${id}`;
   createConnection(dbConfig).query(sql, (err) => { 
     if (err) {
       return res.json({ code: 401, message: 'Save book failed!' }); 
