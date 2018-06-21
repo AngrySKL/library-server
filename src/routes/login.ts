@@ -1,5 +1,4 @@
 import { Router } from "express";
-import { LoginSuccess, LoginFail } from '../models/response';
 import { createConnection } from "mysql";
 
 import * as bodyParser from 'body-parser';

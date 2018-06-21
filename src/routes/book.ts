@@ -1,4 +1,4 @@
-import { Book, BookDetail } from "../models/book";
+import { BookDetail } from "../models/book";
 import { Router } from "express";
 import { dbConfig } from "../config/db.config";
 import { createConnection } from "mysql";

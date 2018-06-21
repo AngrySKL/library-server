@@ -1,6 +1,4 @@
-import { BorrowFail, BorrowSuccess } from './../models/response';
 import { Router } from "express";
-import { books } from "./mock";
 import { createConnection } from 'mysql';
 
 import * as bodyParser from 'body-parser';
